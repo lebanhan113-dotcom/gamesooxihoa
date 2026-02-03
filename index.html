@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thợ Săn Số Oxi Hóa - Alchemy Edition</title>
+    <title>Thợ Săn Số Oxi Hóa - Final Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Roboto+Mono:wght@500&display=swap');
@@ -11,7 +11,6 @@
         :root {
             --primary-glow: #00ffcc;
             --secondary-glow: #bd00ff;
-            --stone-bg: #2d3748;
         }
 
         body {
@@ -23,98 +22,45 @@
             color: #e2e8f0;
             overflow-x: hidden;
             min-height: 100vh;
+            user-select: none;
         }
 
         .chemical-font {
             font-family: 'Roboto Mono', monospace;
         }
 
-        /* Stone Styles */
+        /* --- Magic Stones (Big & Bold) --- */
         .magic-stone {
             background: linear-gradient(145deg, #1e293b, #0f172a);
             box-shadow: 
                 5px 5px 10px #0b1120, 
                 -5px -5px 10px #2d3e56,
                 inset 0 0 0 2px rgba(255, 255, 255, 0.05);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
             cursor: pointer;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .magic-stone::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.1), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
         .magic-stone:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 
-                0 0 15px var(--primary-glow),
-                5px 5px 15px #0b1120;
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 0 20px var(--primary-glow);
             border-color: var(--primary-glow);
+            z-index: 10;
         }
 
-        .magic-stone:hover::before {
-            opacity: 1;
+        .magic-stone:active {
+            transform: scale(0.95);
         }
 
-        .magic-stone.selected {
-            background: #0f766e;
-            box-shadow: inset 0 0 10px #000;
-        }
-
-        /* Animations */
+        /* --- Animations --- */
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
         }
+        .floating { animation: float 4s ease-in-out infinite; }
 
-        .floating {
-            animation: float 4s ease-in-out infinite;
-        }
-
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 204, 0.2); }
-            50% { box-shadow: 0 0 40px rgba(0, 255, 204, 0.5); }
-        }
-
-        .glow-box {
-            animation: pulse-glow 3s infinite;
-        }
-
-        .element-highlight {
-            color: #fbbf24;
-            text-shadow: 0 0 10px #fbbf24;
-            font-weight: bold;
-        }
-
-        /* Game Container */
-        .game-panel {
-            backdrop-filter: blur(10px);
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* Progress Bar */
-        .progress-bar {
-            transition: width 0.5s ease-out;
-        }
-
-        /* Subscript sizing */
-        sub {
-            font-size: 0.6em;
-        }
-        sup {
-            font-size: 0.6em;
-        }
-
-        /* Feedback Animation */
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-5px); }
@@ -129,122 +75,124 @@
         }
         .pop { animation: pop 0.3s ease-out; }
 
-        .correct-flash {
-            animation: correctFlash 0.5s ease-out;
+        /* Highlight classes */
+        .element-highlight {
+            color: #fbbf24;
+            text-shadow: 0 0 10px #fbbf24;
+            font-weight: bold;
         }
+
+        .game-panel {
+            backdrop-filter: blur(10px);
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Flash Effects */
+        .correct-flash { animation: correctFlash 0.5s ease-out; }
         @keyframes correctFlash {
-            0% { background-color: rgba(16, 185, 129, 0.5); }
+            0% { background-color: rgba(16, 185, 129, 0.4); }
             100% { background-color: transparent; }
         }
 
-        .wrong-flash {
-            animation: wrongFlash 0.5s ease-out;
-        }
+        .wrong-flash { animation: wrongFlash 0.5s ease-out; }
         @keyframes wrongFlash {
-            0% { background-color: rgba(239, 68, 68, 0.5); }
+            0% { background-color: rgba(239, 68, 68, 0.4); }
             100% { background-color: transparent; }
         }
     </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen p-4 select-none">
+<body class="flex flex-col items-center justify-center min-h-screen p-4">
 
-    <!-- Start Screen -->
+    <!-- START SCREEN -->
     <div id="start-screen" class="text-center z-10 max-w-2xl w-full">
         <div class="mb-8 floating">
             <h1 class="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500 mb-4 drop-shadow-lg">
                 THỢ SĂN<br>SỐ OXI HÓA
             </h1>
-            <p class="text-xl text-gray-400 tracking-widest">ALCHEMY EDITION</p>
+            <p class="text-xl text-gray-400 tracking-widest uppercase">Alchemy Edition</p>
         </div>
         
         <div class="game-panel p-8 rounded-2xl shadow-2xl mx-4">
-            <div class="space-y-6">
-                <div class="flex justify-center gap-4 text-sm md:text-base">
-                    <div class="flex items-center gap-2">
-                        <span class="w-3 h-3 rounded-full bg-green-400"></span>
-                        <span>Dễ</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="w-3 h-3 rounded-full bg-yellow-400"></span>
-                        <span>Trung Bình</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="w-3 h-3 rounded-full bg-red-400"></span>
-                        <span>Khó</span>
-                    </div>
-                </div>
-                <p class="text-gray-300">
-                    Sử dụng kiến thức giả kim thuật của bạn để tìm số oxi hóa của nguyên tố bí ẩn.
-                    <br>Hoàn thành 3 cấp độ để trở thành Đại Sư.
-                </p>
-                <button onclick="startGame()" class="group relative px-8 py-4 bg-gradient-to-r from-teal-500 to-blue-600 rounded-lg text-white font-bold text-xl shadow-lg hover:shadow-teal-500/50 transition-all transform hover:-translate-y-1 active:scale-95 overflow-hidden w-full md:w-auto">
-                    <span class="relative z-10">BẮT ĐẦU SĂN</span>
-                    <div class="absolute inset-0 h-full w-full bg-gradient-to-r from-blue-600 to-teal-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                </button>
-            </div>
+            <p class="text-gray-300 mb-8 text-lg">
+                Sử dụng kiến thức giả kim thuật để tìm số oxi hóa của nguyên tố bí ẩn.<br>
+                <span class="text-yellow-400 text-sm">(Gợi ý phương trình có sẵn nếu bạn cần)</span>
+            </p>
+            <button onclick="startGame()" class="w-full md:w-auto px-12 py-4 bg-gradient-to-r from-teal-500 to-blue-600 rounded-xl text-white font-bold text-2xl shadow-lg hover:shadow-teal-500/50 transition-all transform hover:-translate-y-1 active:scale-95">
+                BẮT ĐẦU SĂN
+            </button>
         </div>
     </div>
 
-    <!-- Game UI -->
-    <div id="game-ui" class="hidden w-full max-w-4xl flex flex-col items-center gap-6">
+    <!-- GAME UI -->
+    <div id="game-ui" class="hidden w-full max-w-5xl flex flex-col items-center gap-6">
         
         <!-- Header: Stats -->
-        <div class="w-full grid grid-cols-3 gap-4 text-center game-panel p-4 rounded-xl">
+        <div class="w-full grid grid-cols-3 gap-4 text-center game-panel p-4 rounded-2xl">
             <div class="flex flex-col">
                 <span class="text-xs text-gray-400 uppercase tracking-wider">Cấp Độ</span>
-                <span id="level-display" class="text-xl font-bold text-teal-400">1</span>
+                <span id="level-display" class="text-2xl font-bold text-teal-400">1</span>
             </div>
             <div class="flex flex-col border-l border-r border-gray-700">
                 <span class="text-xs text-gray-400 uppercase tracking-wider">Thời Gian</span>
-                <span id="timer-display" class="text-xl font-mono text-white">00:00</span>
+                <span id="timer-display" class="text-2xl font-mono text-white">00:00</span>
             </div>
             <div class="flex flex-col">
                 <span class="text-xs text-gray-400 uppercase tracking-wider">Điểm</span>
-                <span id="score-display" class="text-xl font-bold text-yellow-400">0</span>
+                <span id="score-display" class="text-2xl font-bold text-yellow-400">0</span>
             </div>
         </div>
 
-        <!-- Progress -->
-        <div class="w-full bg-gray-800 rounded-full h-2 overflow-hidden shadow-inner">
-            <div id="progress-bar" class="bg-gradient-to-r from-teal-400 to-blue-500 h-full w-0"></div>
+        <!-- Progress Bar -->
+        <div class="w-full bg-gray-800 rounded-full h-3 overflow-hidden shadow-inner border border-gray-700">
+            <div id="progress-bar" class="bg-gradient-to-r from-teal-400 to-blue-500 h-full w-0 transition-all duration-500"></div>
         </div>
 
         <!-- Main Question Area -->
-        <div class="relative w-full game-panel p-8 md:p-12 rounded-3xl text-center glow-box min-h-[300px] flex flex-col justify-center items-center">
+        <div class="relative w-full game-panel p-6 md:p-10 rounded-3xl text-center min-h-[320px] flex flex-col justify-center items-center overflow-hidden">
             
             <div class="mb-2 text-gray-400 text-sm uppercase tracking-widest">Xác định số Oxi hóa của</div>
-            
-            <div id="target-element-name" class="text-2xl text-teal-300 font-bold mb-6">Nguyên tố</div>
+            <div id="target-element-name" class="text-2xl text-teal-300 font-bold mb-4">Nguyên tố</div>
 
-            <!-- Compound Display -->
-            <div id="compound-display" class="chemical-font text-5xl md:text-7xl font-bold mb-8 tracking-wider bg-black/20 px-8 py-4 rounded-xl border border-white/10">
-                <!-- Content injected by JS -->
+            <!-- Compound Formula -->
+            <div id="compound-display" class="chemical-font text-6xl md:text-8xl font-bold mb-6 tracking-wider bg-black/30 px-10 py-6 rounded-2xl border border-white/10 shadow-inner">
+                <!-- Injected via JS -->
             </div>
 
-            <!-- Drop Zone (Visual Only, since we click stones) -->
-            <div class="flex items-center gap-3">
-                <span class="text-gray-400 text-lg">Đáp án:</span>
-                <div id="answer-box" class="w-20 h-20 border-2 border-dashed border-gray-500 rounded-xl flex items-center justify-center text-3xl font-bold bg-white/5 text-white transition-all">
+            <!-- Hint Button & Display -->
+            <div class="h-16 w-full flex flex-col items-center justify-center mb-4">
+                <button id="hint-btn" onclick="showHint()" class="group flex items-center gap-2 px-5 py-2 rounded-full border border-teal-500/30 hover:bg-teal-500/20 transition-all text-teal-400 text-sm font-bold uppercase tracking-wider">
+                    <span class="group-hover:animate-pulse">✨ Soi Sáng (Gợi ý)</span>
+                </button>
+                <div id="hint-text" class="hidden text-yellow-400 font-mono text-lg md:text-xl bg-black/40 px-4 py-2 rounded-lg border border-yellow-500/30 animate-pop">
+                    <!-- Hint equation injected here -->
+                </div>
+            </div>
+
+            <!-- Answer Box (Visual) -->
+            <div class="flex items-center gap-4 mt-2">
+                <span class="text-gray-400 text-lg">Kết quả:</span>
+                <div id="answer-box" class="w-24 h-24 border-2 border-dashed border-gray-600 rounded-2xl flex items-center justify-center text-4xl font-bold bg-white/5 text-white transition-all">
                     ?
                 </div>
             </div>
 
-            <!-- Feedback Overlay -->
-            <div id="feedback-overlay" class="absolute inset-0 flex items-center justify-center rounded-3xl pointer-events-none opacity-0 transition-opacity duration-300 bg-black/60 backdrop-blur-sm z-20">
-                <div id="feedback-text" class="text-4xl font-bold transform scale-50 transition-transform duration-300"></div>
+            <!-- Fullscreen Feedback Overlay (Hidden by default) -->
+            <div id="feedback-overlay" class="absolute inset-0 flex items-center justify-center z-50 pointer-events-none opacity-0 transition-opacity duration-300">
+                <div id="feedback-text" class="text-6xl font-bold drop-shadow-2xl transform scale-50 transition-transform"></div>
             </div>
         </div>
 
-        <!-- Stones Grid -->
+        <!-- STONES GRID (Inputs) -->
         <div class="w-full">
-            <p class="text-center text-gray-400 mb-4 text-sm">Chọn viên đá phép thuật chính xác</p>
-            <div id="stones-grid" class="grid grid-cols-4 md:grid-cols-8 gap-3 md:gap-4">
-                <!-- Stones injected by JS -->
+            <p class="text-center text-gray-500 mb-4 text-xs uppercase tracking-widest">Chọn viên đá phép thuật</p>
+            <div id="stones-grid" class="grid grid-cols-4 md:grid-cols-7 gap-3 md:gap-4 px-2">
+                <!-- Generated by JS -->
             </div>
         </div>
     </div>
 
-    <!-- Level Complete / Game Over Screen -->
+    <!-- END SCREEN -->
     <div id="end-screen" class="hidden text-center z-10 max-w-md w-full">
         <div class="game-panel p-8 rounded-2xl shadow-2xl relative overflow-hidden">
             <div class="absolute inset-0 bg-gradient-to-b from-teal-500/10 to-transparent pointer-events-none"></div>
@@ -252,88 +200,85 @@
             <h2 id="end-title" class="text-3xl font-bold mb-2 text-white">HOÀN THÀNH!</h2>
             <div id="end-subtitle" class="text-teal-400 mb-6 font-bold text-lg">CẤP ĐỘ 1</div>
 
-            <div class="flex justify-center gap-8 mb-8">
+            <div class="flex justify-center gap-8 mb-8 bg-black/20 p-4 rounded-xl">
                 <div class="text-center">
-                    <div class="text-sm text-gray-400">Điểm Số</div>
-                    <div id="final-score" class="text-3xl font-bold text-yellow-400">0</div>
+                    <div class="text-xs text-gray-400 uppercase">Điểm Số</div>
+                    <div id="final-score" class="text-4xl font-bold text-yellow-400">0</div>
                 </div>
-                <div class="text-center">
-                    <div class="text-sm text-gray-400">Thời Gian</div>
-                    <div id="final-time" class="text-3xl font-mono text-white">00:00</div>
+                <div class="text-center border-l border-gray-600 pl-8">
+                    <div class="text-xs text-gray-400 uppercase">Thời Gian</div>
+                    <div id="final-time" class="text-4xl font-mono text-white">00:00</div>
                 </div>
             </div>
 
-            <p id="end-message" class="text-gray-300 mb-8 italic">"Bạn đã nắm vững những điều cơ bản..."</p>
+            <p id="end-message" class="text-gray-300 mb-8 italic text-sm">"Bạn đã nắm vững những điều cơ bản..."</p>
 
-            <button id="next-btn" onclick="nextLevel()" class="w-full py-4 bg-teal-600 hover:bg-teal-500 rounded-lg text-white font-bold text-lg shadow-lg transition-all mb-3">
-                CẤP ĐỘ TIẾP THEO
+            <button id="next-btn" onclick="nextLevel()" class="w-full py-4 bg-teal-600 hover:bg-teal-500 rounded-xl text-white font-bold text-lg shadow-lg transition-all mb-3 transform hover:-translate-y-1">
+                CẤP ĐỘ TIẾP THEO ➜
             </button>
-            <button onclick="resetGame()" class="w-full py-3 bg-gray-700 hover:bg-gray-600 rounded-lg text-gray-200 font-semibold transition-all">
+            <button onclick="resetGame()" class="w-full py-3 bg-gray-700 hover:bg-gray-600 rounded-xl text-gray-200 font-semibold transition-all">
                 Chơi Lại Từ Đầu
             </button>
         </div>
     </div>
 
     <script>
-        // Game Data
+        // --- DATA ---
         const LEVELS = [
             {
                 id: 1,
                 name: "TẬP SỰ",
                 questions: [
-                    { compound: "NaCl", target: "Na", ans: "+1", html: "<span class='element-highlight'>Na</span>Cl" },
-                    { compound: "H2O", target: "O", ans: "-2", html: "H<sub>2</sub><span class='element-highlight'>O</span>" },
-                    { compound: "HCl", target: "Cl", ans: "-1", html: "H<span class='element-highlight'>Cl</span>" },
-                    { compound: "MgO", target: "Mg", ans: "+2", html: "<span class='element-highlight'>Mg</span>O" },
-                    { compound: "CO2", target: "C", ans: "+4", html: "<span class='element-highlight'>C</span>O<sub>2</sub>" },
-                    { compound: "O2", target: "O", ans: "0", html: "<span class='element-highlight'>O</span><sub>2</sub>" },
-                    { compound: "AlCl3", target: "Al", ans: "+3", html: "<span class='element-highlight'>Al</span>Cl<sub>3</sub>" },
-                    { compound: "Fe", target: "Fe", ans: "0", html: "<span class='element-highlight'>Fe</span>" },
-                    { compound: "SO2", target: "S", ans: "+4", html: "<span class='element-highlight'>S</span>O<sub>2</sub>" },
-                    { compound: "CH4", target: "C", ans: "-4", html: "<span class='element-highlight'>C</span>H<sub>4</sub>" }
-                ],
-                reqScore: 8 // Questions to pass
+                    { compound: "NaCl", target: "Na", ans: "+1", html: "<span class='element-highlight'>Na</span>Cl", hint: "x + (-1) = 0" },
+                    { compound: "H2O", target: "O", ans: "-2", html: "H<sub>2</sub><span class='element-highlight'>O</span>", hint: "2·(+1) + x = 0" },
+                    { compound: "HCl", target: "Cl", ans: "-1", html: "H<span class='element-highlight'>Cl</span>", hint: "(+1) + x = 0" },
+                    { compound: "MgO", target: "Mg", ans: "+2", html: "<span class='element-highlight'>Mg</span>O", hint: "x + (-2) = 0" },
+                    { compound: "CO2", target: "C", ans: "+4", html: "<span class='element-highlight'>C</span>O<sub>2</sub>", hint: "x + 2·(-2) = 0" },
+                    { compound: "O2", target: "O", ans: "0", html: "<span class='element-highlight'>O</span><sub>2</sub>", hint: "Đơn chất = 0" },
+                    { compound: "AlCl3", target: "Al", ans: "+3", html: "<span class='element-highlight'>Al</span>Cl<sub>3</sub>", hint: "x + 3·(-1) = 0" },
+                    { compound: "Fe", target: "Fe", ans: "0", html: "<span class='element-highlight'>Fe</span>", hint: "Đơn chất = 0" },
+                    { compound: "SO2", target: "S", ans: "+4", html: "<span class='element-highlight'>S</span>O<sub>2</sub>", hint: "x + 2·(-2) = 0" },
+                    { compound: "CH4", target: "C", ans: "-4", html: "<span class='element-highlight'>C</span>H<sub>4</sub>", hint: "x + 4·(+1) = 0" }
+                ]
             },
             {
                 id: 2,
                 name: "GIẢ KIM THUẬT SƯ",
                 questions: [
-                    { compound: "H2SO4", target: "S", ans: "+6", html: "H<sub>2</sub><span class='element-highlight'>S</span>O<sub>4</sub>" },
-                    { compound: "HNO3", target: "N", ans: "+5", html: "H<span class='element-highlight'>N</span>O<sub>3</sub>" },
-                    { compound: "KMnO4", target: "Mn", ans: "+7", html: "K<span class='element-highlight'>Mn</span>O<sub>4</sub>" },
-                    { compound: "NH4+", target: "N", ans: "-3", html: "<span class='element-highlight'>N</span>H<sub>4</sub><sup>+</sup>" },
-                    { compound: "NO3-", target: "N", ans: "+5", html: "<span class='element-highlight'>N</span>O<sub>3</sub><sup>-</sup>" },
-                    { compound: "Fe2O3", target: "Fe", ans: "+3", html: "<span class='element-highlight'>Fe</span><sub>2</sub>O<sub>3</sub>" },
-                    { compound: "K2CrO4", target: "Cr", ans: "+6", html: "K<sub>2</sub><span class='element-highlight'>Cr</span>O<sub>4</sub>" },
-                    { compound: "SO4 2-", target: "S", ans: "+6", html: "<span class='element-highlight'>S</span>O<sub>4</sub><sup>2-</sup>" },
-                    { compound: "N2O", target: "N", ans: "+1", html: "<span class='element-highlight'>N</span><sub>2</sub>O" },
-                    { compound: "H2S", target: "S", ans: "-2", html: "H<sub>2</sub><span class='element-highlight'>S</span>" }
-                ],
-                reqScore: 8
+                    { compound: "H2SO4", target: "S", ans: "+6", html: "H<sub>2</sub><span class='element-highlight'>S</span>O<sub>4</sub>", hint: "2·(+1) + x + 4·(-2) = 0" },
+                    { compound: "HNO3", target: "N", ans: "+5", html: "H<span class='element-highlight'>N</span>O<sub>3</sub>", hint: "(+1) + x + 3·(-2) = 0" },
+                    { compound: "KMnO4", target: "Mn", ans: "+7", html: "K<span class='element-highlight'>Mn</span>O<sub>4</sub>", hint: "(+1) + x + 4·(-2) = 0" },
+                    { compound: "NH4+", target: "N", ans: "-3", html: "<span class='element-highlight'>N</span>H<sub>4</sub><sup>+</sup>", hint: "x + 4·(+1) = +1 (ion)" },
+                    { compound: "NO3-", target: "N", ans: "+5", html: "<span class='element-highlight'>N</span>O<sub>3</sub><sup>-</sup>", hint: "x + 3·(-2) = -1 (ion)" },
+                    { compound: "Fe2O3", target: "Fe", ans: "+3", html: "<span class='element-highlight'>Fe</span><sub>2</sub>O<sub>3</sub>", hint: "2·x + 3·(-2) = 0" },
+                    { compound: "K2CrO4", target: "Cr", ans: "+6", html: "K<sub>2</sub><span class='element-highlight'>Cr</span>O<sub>4</sub>", hint: "2·(+1) + x + 4·(-2) = 0" },
+                    { compound: "SO4 2-", target: "S", ans: "+6", html: "<span class='element-highlight'>S</span>O<sub>4</sub><sup>2-</sup>", hint: "x + 4·(-2) = -2 (ion)" },
+                    { compound: "N2O", target: "N", ans: "+1", html: "<span class='element-highlight'>N</span><sub>2</sub>O", hint: "2·x + (-2) = 0" },
+                    { compound: "H2S", target: "S", ans: "-2", html: "H<sub>2</sub><span class='element-highlight'>S</span>", hint: "2·(+1) + x = 0" }
+                ]
             },
             {
                 id: 3,
                 name: "ĐẠI SƯ",
                 questions: [
-                    { compound: "K2Cr2O7", target: "Cr", ans: "+6", html: "K<sub>2</sub><span class='element-highlight'>Cr</span><sub>2</sub>O<sub>7</sub>" },
-                    { compound: "KClO3", target: "Cl", ans: "+5", html: "K<span class='element-highlight'>Cl</span>O<sub>3</sub>" },
-                    { compound: "Fe3O4", target: "Fe", ans: "+8/3", html: "<span class='element-highlight'>Fe</span><sub>3</sub>O<sub>4</sub>" },
-                    { compound: "Na2S2O3", target: "S", ans: "+2", html: "Na<sub>2</sub><span class='element-highlight'>S</span><sub>2</sub>O<sub>3</sub>" },
-                    { compound: "NH4NO3", target: "N (trong NH4+)", ans: "-3", html: "<span class='element-highlight'>N</span>H<sub>4</sub>NO<sub>3</sub> (trong ion dương)" },
-                    { compound: "H2O2", target: "O", ans: "-1", html: "H<sub>2</sub><span class='element-highlight'>O</span><sub>2</sub>" },
-                    { compound: "F2O", target: "O", ans: "+2", html: "F<sub>2</sub><span class='element-highlight'>O</span>" },
-                    { compound: "FeS2", target: "S", ans: "-1", html: "Fe<span class='element-highlight'>S</span><sub>2</sub>" },
-                    { compound: "Cr(OH)4-", target: "Cr", ans: "+3", html: "<span class='element-highlight'>Cr</span>(OH)<sub>4</sub><sup>-</sup>" },
-                    { compound: "MnO2", target: "Mn", ans: "+4", html: "<span class='element-highlight'>Mn</span>O<sub>2</sub>" }
-                ],
-                reqScore: 8
+                    { compound: "K2Cr2O7", target: "Cr", ans: "+6", html: "K<sub>2</sub><span class='element-highlight'>Cr</span><sub>2</sub>O<sub>7</sub>", hint: "2·(+1) + 2·x + 7·(-2) = 0" },
+                    { compound: "KClO3", target: "Cl", ans: "+5", html: "K<span class='element-highlight'>Cl</span>O<sub>3</sub>", hint: "(+1) + x + 3·(-2) = 0" },
+                    { compound: "Fe3O4", target: "Fe", ans: "+8/3", html: "<span class='element-highlight'>Fe</span><sub>3</sub>O<sub>4</sub>", hint: "3·x + 4·(-2) = 0" },
+                    { compound: "Na2S2O3", target: "S", ans: "+2", html: "Na<sub>2</sub><span class='element-highlight'>S</span><sub>2</sub>O<sub>3</sub>", hint: "2·(+1) + 2·x + 3·(-2) = 0" },
+                    { compound: "NH4NO3", target: "N (NH4+)", ans: "-3", html: "<span class='element-highlight'>N</span>H<sub>4</sub>NO<sub>3</sub>", hint: "Trong ion NH4+: x + 4·(+1) = +1" },
+                    { compound: "H2O2", target: "O", ans: "-1", html: "H<sub>2</sub><span class='element-highlight'>O</span><sub>2</sub>", hint: "2·(+1) + 2·x = 0 (Peroxit)" },
+                    { compound: "F2O", target: "O", ans: "+2", html: "F<sub>2</sub><span class='element-highlight'>O</span>", hint: "2·(-1) + x = 0 (F luôn -1)" },
+                    { compound: "FeS2", target: "S", ans: "-1", html: "Fe<span class='element-highlight'>S</span><sub>2</sub>", hint: "(+2) + 2·x = 0 (Sắt pyrit)" },
+                    { compound: "Cr(OH)4-", target: "Cr", ans: "+3", html: "<span class='element-highlight'>Cr</span>(OH)<sub>4</sub><sup>-</sup>", hint: "x + 4·(-1) = -1 (OH là -1)" },
+                    { compound: "MnO2", target: "Mn", ans: "+4", html: "<span class='element-highlight'>Mn</span>O<sub>2</sub>", hint: "x + 2·(-2) = 0" }
+                ]
             }
         ];
 
-        // Options pool (Stones)
+        // Include +8/3 and common numbers
         const OPTIONS = ["-4", "-3", "-2", "-1", "0", "+1", "+2", "+3", "+4", "+5", "+6", "+7", "+8/3"];
 
-        // State
+        // --- STATE ---
         let currentLevelIndex = 0;
         let currentQuestionIndex = 0;
         let score = 0;
@@ -342,13 +287,12 @@
         let currentQuestions = [];
         let isProcessing = false;
 
-        // DOM Elements
+        // --- DOM Elements ---
         const screens = {
             start: document.getElementById('start-screen'),
             game: document.getElementById('game-ui'),
             end: document.getElementById('end-screen')
         };
-
         const display = {
             level: document.getElementById('level-display'),
             score: document.getElementById('score-display'),
@@ -358,12 +302,13 @@
             progressBar: document.getElementById('progress-bar'),
             stonesGrid: document.getElementById('stones-grid'),
             answerBox: document.getElementById('answer-box'),
+            hintBtn: document.getElementById('hint-btn'),
+            hintText: document.getElementById('hint-text'),
             feedbackOverlay: document.getElementById('feedback-overlay'),
             feedbackText: document.getElementById('feedback-text')
         };
 
-        // Audio Effects (Simulated with visual cues since no audio files)
-        
+        // --- INIT ---
         function initGame() {
             renderStones();
         }
@@ -372,13 +317,21 @@
             display.stonesGrid.innerHTML = '';
             OPTIONS.forEach(opt => {
                 const btn = document.createElement('button');
-                btn.className = 'magic-stone rounded-lg h-16 md:h-20 flex items-center justify-center text-xl md:text-2xl font-bold text-gray-200';
+                // Big buttons requested
+                btn.className = 'magic-stone rounded-2xl h-20 md:h-24 flex items-center justify-center text-2xl md:text-3xl font-bold text-gray-200 select-none';
                 btn.textContent = opt;
                 btn.onclick = () => handleAnswer(opt);
                 display.stonesGrid.appendChild(btn);
             });
         }
 
+        function switchScreen(screenName) {
+            Object.values(screens).forEach(s => s.classList.add('hidden'));
+            screens[screenName].classList.remove('hidden');
+            if(screenName === 'game') screens[screenName].classList.add('flex');
+        }
+
+        // --- GAME LOOP ---
         function startGame() {
             score = 0;
             timer = 0;
@@ -400,9 +353,8 @@
 
         function loadLevel(idx) {
             currentLevelIndex = idx;
-            const level = LEVELS[idx];
-            // Shuffle questions
-            currentQuestions = [...level.questions].sort(() => Math.random() - 0.5);
+            // Shuffle questions for variety
+            currentQuestions = [...LEVELS[idx].questions].sort(() => Math.random() - 0.5);
             currentQuestionIndex = 0;
             
             display.level.textContent = idx + 1;
@@ -413,21 +365,32 @@
         function loadQuestion() {
             const q = currentQuestions[currentQuestionIndex];
             
-            // Animation for transition
+            // Reset state
+            display.hintText.classList.add('hidden');
+            display.hintBtn.classList.remove('hidden');
+            display.answerBox.textContent = "?";
+            display.answerBox.className = "w-24 h-24 border-2 border-dashed border-gray-600 rounded-2xl flex items-center justify-center text-4xl font-bold bg-white/5 text-white transition-all";
+
+            // Animate In
             display.compound.style.opacity = '0';
             display.compound.style.transform = 'scale(0.9)';
             
             setTimeout(() => {
                 display.compound.innerHTML = q.html;
                 display.targetName.textContent = `Nguyên tố: ${q.target}`;
-                display.answerBox.textContent = "?";
-                display.answerBox.className = "w-20 h-20 border-2 border-dashed border-gray-500 rounded-xl flex items-center justify-center text-3xl font-bold bg-white/5 text-white transition-all";
                 
                 display.compound.style.transition = 'all 0.3s ease-out';
                 display.compound.style.opacity = '1';
                 display.compound.style.transform = 'scale(1)';
                 isProcessing = false;
-            }, 200);
+            }, 100);
+        }
+
+        function showHint() {
+            const q = currentQuestions[currentQuestionIndex];
+            display.hintBtn.classList.add('hidden');
+            display.hintText.innerHTML = `Tính x: <span class="text-white font-bold ml-2">${q.hint}</span>`;
+            display.hintText.classList.remove('hidden');
         }
 
         function handleAnswer(selectedVal) {
@@ -437,17 +400,21 @@
             const q = currentQuestions[currentQuestionIndex];
             const isCorrect = selectedVal === q.ans;
 
-            // Update UI
+            // UI Feedback inside Answer Box
             display.answerBox.textContent = selectedVal;
-            display.answerBox.className = `w-20 h-20 border-2 border-solid rounded-xl flex items-center justify-center text-3xl font-bold text-white transition-all pop ${isCorrect ? 'bg-green-600 border-green-400 shadow-[0_0_15px_rgba(74,222,128,0.5)]' : 'bg-red-600 border-red-400 shadow-[0_0_15px_rgba(248,113,113,0.5)]'}`;
+            display.answerBox.className = `w-24 h-24 border-2 border-solid rounded-2xl flex items-center justify-center text-4xl font-bold text-white transition-all pop ${
+                isCorrect 
+                ? 'bg-green-600 border-green-400 shadow-[0_0_20px_rgba(74,222,128,0.6)]' 
+                : 'bg-red-600 border-red-400 shadow-[0_0_20px_rgba(248,113,113,0.6)]'
+            }`;
 
-            // Show full screen flash
+            // Full Screen Flash
             const flashClass = isCorrect ? 'correct-flash' : 'wrong-flash';
             document.querySelector('.game-panel').classList.add(flashClass);
             setTimeout(() => document.querySelector('.game-panel').classList.remove(flashClass), 500);
 
-            // Show feedback text overlay
-            showFeedback(isCorrect);
+            // Overlay Text
+            showOverlayFeedback(isCorrect);
 
             if (isCorrect) {
                 score += 10;
@@ -455,12 +422,11 @@
                 display.score.classList.add('pop');
                 setTimeout(() => display.score.classList.remove('pop'), 300);
             } else {
-                // Shake effect on wrong answer
                 display.compound.classList.add('shake');
                 setTimeout(() => display.compound.classList.remove('shake'), 400);
             }
 
-            // Delay for next question
+            // Next Logic
             setTimeout(() => {
                 currentQuestionIndex++;
                 updateProgress();
@@ -470,19 +436,23 @@
                 } else {
                     loadQuestion();
                 }
-            }, 1000);
+            }, 1200);
         }
 
-        function showFeedback(isCorrect) {
+        function showOverlayFeedback(isCorrect) {
             const overlay = display.feedbackOverlay;
             const text = display.feedbackText;
             
             overlay.classList.remove('opacity-0');
-            text.textContent = isCorrect ? "CHÍNH XÁC!" : "SAI RỒI!";
-            text.className = `text-4xl md:text-6xl font-bold transform scale-100 transition-all duration-300 ${isCorrect ? 'text-green-400 drop-shadow-[0_0_10px_rgba(74,222,128,0.8)]' : 'text-red-400 drop-shadow-[0_0_10px_rgba(248,113,113,0.8)]'}`;
+            overlay.style.backgroundColor = isCorrect ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.3)';
             
+            text.textContent = isCorrect ? "CHÍNH XÁC!" : "SAI RỒI!";
+            text.className = `text-5xl md:text-7xl font-bold transform transition-all duration-300 ${
+                isCorrect ? 'text-green-400 drop-shadow-[0_0_15px_rgba(74,222,128,1)] scale-110' : 'text-red-500 drop-shadow-[0_0_15px_rgba(248,113,113,1)] scale-110'
+            }`;
+
             setTimeout(() => {
-                text.classList.remove('scale-100');
+                text.classList.remove('scale-110');
                 text.classList.add('scale-50');
                 overlay.classList.add('opacity-0');
             }, 800);
@@ -490,12 +460,13 @@
 
         function updateProgress() {
             const total = currentQuestions.length;
+            // Prevent division by zero if empty
+            if (total === 0) return;
             const pct = (currentQuestionIndex / total) * 100;
             display.progressBar.style.width = `${pct}%`;
         }
 
         function finishLevel() {
-            // Check pass condition (optional logic, currently just passing everything)
             if (currentLevelIndex < LEVELS.length - 1) {
                 showEndScreen(false);
             } else {
@@ -517,43 +488,32 @@
 
             if (isGameComplete) {
                 endTitle.textContent = "ĐẠI SƯ GIẢ KIM!";
-                endTitle.className = "text-3xl md:text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600";
-                endSub.textContent = "BẠN ĐÃ HOÀN THÀNH MỌI CẤP ĐỘ";
-                endMsg.textContent = "Kiến thức về số oxi hóa của bạn thật đáng kinh ngạc.";
+                endTitle.className = "text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-orange-400 to-yellow-600";
+                endSub.textContent = "BẠN ĐÃ CHINH PHỤC MỌI THỬ THÁCH";
+                endMsg.textContent = "Tuyệt vời! Bạn là bậc thầy về số oxi hóa.";
                 nextBtn.style.display = 'none';
             } else {
                 endTitle.textContent = "HOÀN THÀNH CẤP ĐỘ";
                 endTitle.className = "text-3xl font-bold mb-2 text-white";
                 endSub.textContent = LEVELS[currentLevelIndex].name;
-                endMsg.textContent = "Chuẩn bị cho thử thách tiếp theo...";
+                endMsg.textContent = "Chuẩn bị tinh thần cho cấp độ khó hơn...";
                 nextBtn.style.display = 'block';
-                nextBtn.textContent = `TIẾP TỤC: ${LEVELS[currentLevelIndex + 1].name}`;
+                nextBtn.textContent = `TIẾP TỤC: ${LEVELS[currentLevelIndex + 1].name} ➜`;
             }
         }
 
         function nextLevel() {
             loadLevel(currentLevelIndex + 1);
             switchScreen('game');
-            startTimer(); // Resume timer
+            startTimer();
         }
 
         function resetGame() {
             startGame();
         }
 
-        function switchScreen(screenName) {
-            Object.values(screens).forEach(s => s.classList.add('hidden'));
-            screens[screenName].classList.remove('hidden');
-            screens[screenName].classList.add('flex', 'flex-col');
-            if (screenName === 'game') {
-                screens[screenName].classList.remove('flex-col'); // Reset specific layout if needed, though Tailwind handles flex-col class above
-                screens[screenName].classList.add('flex');
-            }
-        }
-
-        // Init
+        // Run
         initGame();
-
     </script>
 </body>
 </html>
